@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-// IMPORT SAME LOCAL IMAGES (AS GUEST PAGE)
+// IMPORT SAME LOCAL IMAGES
 import logo from "../../assets/pinkleaf_logo.jpeg";
 import retailImg from "../../assets/retail_main.jpeg";
 import wholesaleImg from "../../assets/wholesale_main.jpeg";
@@ -39,22 +39,23 @@ export default function Home(){
         <div style={{display:"flex",alignItems:"center",gap:"25px"}}>
 
           <span>Home</span>
-          <span>Retail</span>
-          <span>Wholesale</span>
+          <span onClick={()=>navigate("/retail")} style={{cursor:"pointer"}}>Retail</span>
+          <span onClick={()=>navigate("/wholesale")} style={{cursor:"pointer"}}>Wholesale</span>
 
-          {/* PROFILE ICON */}
+          {/* PROFILE */}
           <img
-  src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
-  width="22"
-  style={{cursor:"pointer"}}
-  onClick={()=>navigate("/profile")}
-/>
+            src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
+            width="22"
+            style={{cursor:"pointer"}}
+            onClick={()=>navigate("/profile")}
+          />
 
-          {/* CART ICON */}
+          {/* CART */}
           <img
             src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
             width="22"
             style={{cursor:"pointer"}}
+            onClick={()=>navigate("/cart")}
           />
 
           <button
@@ -89,14 +90,18 @@ export default function Home(){
           <br/><br/>Discover our curated collection of stylish, comfortable clothing designed exclusively for modern women
         </p>
 
-        <button style={{
-          marginTop:"20px",
-          background:"#ff7bb8",
-          border:"none",
-          padding:"12px 30px",
-          borderRadius:"25px",
-          color:"#fff"
-        }}>
+        {/* ✅ CLICKABLE */}
+        <button
+          onClick={()=>navigate("/retail")}
+          style={{
+            marginTop:"20px",
+            background:"#ff7bb8",
+            border:"none",
+            padding:"12px 30px",
+            borderRadius:"25px",
+            color:"#fff",
+            cursor:"pointer"
+          }}>
           Shop Now →
         </button>
 
@@ -119,7 +124,10 @@ export default function Home(){
           marginTop:"30px"
         }}>
 
-          <div style={{
+          {/* ✅ RETAIL CLICK */}
+          <div
+            onClick={()=>navigate("/retail")}
+            style={{
             width:"300px",
             height:"230px",
             borderRadius:"10px",
@@ -130,14 +138,18 @@ export default function Home(){
             padding:"20px",
             display:"flex",
             flexDirection:"column",
-            justifyContent:"flex-end"
+            justifyContent:"flex-end",
+            cursor:"pointer"
           }}>
             <h4>Retail Shopping</h4>
             <p>Premium individual products with fast delivery</p>
           </div>
 
 
-          <div style={{
+          {/* ✅ WHOLESALE CLICK */}
+          <div
+            onClick={()=>navigate("/wholesale")}
+            style={{
             width:"300px",
             height:"230px",
             borderRadius:"10px",
@@ -148,7 +160,8 @@ export default function Home(){
             padding:"20px",
             display:"flex",
             flexDirection:"column",
-            justifyContent:"flex-end"
+            justifyContent:"flex-end",
+            cursor:"pointer"
           }}>
             <h4>Wholesale</h4>
             <p>Bulk order with competitive pricing & support</p>
@@ -162,68 +175,71 @@ export default function Home(){
 
       {/* RETAIL COLLECTION */}
 
-      
-            <div style={{padding:"40px",textAlign:"center"}}>
-      
-              <h1>Retail Collections</h1>
-      
-              <div style={{
+      <div style={{padding:"40px",textAlign:"center"}}>
+
+        <h1>Retail Collections</h1>
+
+        <div style={{
+          display:"flex",
+          gap:"20px",
+          overflowX:"auto",
+          marginTop:"20px",
+          padding:"10px"
+        }}>
+
+          {[
+            {img:tshirtImg,name:"tshirt"},
+            {img:jeansImg,name:"jeans"},
+            {img:westernImg,name:"western"},
+            {img:cordsetImg,name:"cordset"},
+            {img:kurtiImg,name:"kurti"}
+          ].map((item,i)=>(
+            <div
+              key={i}
+              onClick={()=>navigate(`/retail?category=${item.name}`)}
+              style={{
+                minWidth:"300px",
+                height:"200px",
+                borderRadius:"10px",
+                backgroundImage:`url(${item.img})`,
+                backgroundSize:"cover",
+                backgroundPosition:"center",
+                color:"#fff",
                 display:"flex",
-                gap:"20px",
-                overflowX:"auto",
-                marginTop:"20px",
-                padding:"10px"
+                alignItems:"flex-end",
+                padding:"10px",
+                cursor:"pointer"
               }}>
-      
-                {[
-                  {img:tshirtImg},
-                  {img:jeansImg},
-                  {img:westernImg},
-                  {img:cordsetImg},
-                  {img:kurtiImg}
-                ].map((item,i)=>(
-                  <div key={i} style={{
-                    minWidth:"300px",
-                    height:"200px",
-                    borderRadius:"10px",
-                    backgroundImage:`url(${item.img})`,
-                    backgroundSize:"cover",
-                    backgroundPosition:"center",
-                    color:"#fff",
-                    display:"flex",
-                    alignItems:"flex-end",
-                    padding:"10px"
-                  }}>
-                    <h3>{item.name}</h3>
-                  </div>
-                ))}
-      
-              </div>
-      
+              <h8>{item.name}</h8>
             </div>
-      
-      
-      
-            {/* FOOTER */}
-      
-            <div style={{
-              background:"#ff4da6",
-              color:"#fff",
-              padding:"40px"
-            }}>
-      
-              <h2 style={{textAlign:"center"}}>Ready to Upgrade Your Wardrobe?</h2>
-      
-              <p style={{textAlign:"center"}}>
-                <br/>Join thousands of satisfied customers and discover your perfect style.
-              </p>
-      
-              <p><br/>CONTACT US</p>
-              <p><br/>Contact Number : +91 82389 45773</p>
-              <p><br/>kariyadivyesh@gmail.com</p>
-      
-            </div>
-      
-          </div>
-        );
-      }
+          ))}
+
+        </div>
+
+      </div>
+
+
+
+      {/* FOOTER */}
+
+      <div style={{
+        background:"#ff4da6",
+        color:"#fff",
+        padding:"40px"
+      }}>
+
+        <h2 style={{textAlign:"center"}}>Ready to Upgrade Your Wardrobe?</h2>
+
+        <p style={{textAlign:"center"}}>
+          <br/>Join thousands of satisfied customers and discover your perfect style.
+        </p>
+
+        <p><br/>CONTACT US</p>
+        <p><br/>Contact Number : +91 82389 45773</p>
+        <p><br/>kariyadivyesh@gmail.com</p>
+
+      </div>
+
+    </div>
+  );
+}

@@ -6,7 +6,12 @@ import Signup from "../pages/Signup";
 import Home from "../pages/user/Home";
 import Profile from "../pages/user/Profile";
 import EditProfile from "../pages/user/Editprofile";
-
+import Retail from "../pages/user/Retail";
+import Wholesale from "../pages/user/Wholesale";
+import Cart from "../pages/user/Cart";
+import Checkout from "../pages/user/Checkout";
+import OrderSuccess from "../pages/user/OrderSuccess";
+import MyOrders from "../pages/user/MyOrders";
 
 export default function AppRoutes(){
 
@@ -33,6 +38,25 @@ export default function AppRoutes(){
 
         {/* Edit Profile Page */}
         <Route path="/editprofile" element={<EditProfile />} />
+
+        {/* Retail Page */}
+        <Route path="/retail" element={<Retail />} />
+
+        {/* Wholesale Page */}
+        <Route path="/wholesale" element={<Wholesale />} />
+
+        {/* Cart Page */}
+        <Route path="/cart" element={<Cart />} />
+
+        {/* Checkout Page */}
+        <Route path="/checkout" element={<Checkout />} />
+
+        {/* Order Success Page */}
+        <Route path="/order-success/:id" element={<OrderSuccess />} />
+
+        {/* My Orders Page */}  
+        <Route path="/my-orders" element={<MyOrders />} />        
+
 
       </Routes>
 

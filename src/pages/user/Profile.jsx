@@ -50,8 +50,8 @@ export default function Profile(){
         <div style={{display:"flex",alignItems:"center",gap:"25px"}}>
 
           <span onClick={()=>navigate("/home")} style={{cursor:"pointer"}}>Home</span>
-          <span>Retail</span>
-          <span>Wholesale</span>
+          <span onClick={()=>navigate("/retail")}>Retail</span>
+          <span onClick={()=>navigate("/wholesale")}>Wholesale</span>
 
           {/* PROFILE ICON */}
           <img
@@ -63,6 +63,7 @@ export default function Profile(){
           <img
             src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
             width="22"
+            onClick={()=>navigate("/cart")}
           />
 
           <button
@@ -127,7 +128,8 @@ export default function Profile(){
 
           <br/>
 
-          <button style={{
+          <button onClick={()=>navigate("/my-orders")}
+          style={{
             background:"#ff2e8a",
             color:"#fff",
             border:"none",
