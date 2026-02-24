@@ -12,6 +12,7 @@ import Cart from "../pages/user/Cart";
 import Checkout from "../pages/user/Checkout";
 import OrderSuccess from "../pages/user/OrderSuccess";
 import MyOrders from "../pages/user/MyOrders";
+import AdminDashboard from "../pages/admin/AdminDashboard";
 
 export default function AppRoutes(){
 
@@ -55,7 +56,10 @@ export default function AppRoutes(){
         <Route path="/order-success/:id" element={<OrderSuccess />} />
 
         {/* My Orders Page */}  
-        <Route path="/my-orders" element={<MyOrders />} />        
+        <Route path="/my-orders" element={<MyOrders />} />   
+
+        {/* Admin Dashboard */}
+        <Route path="/admin" element={<AdminDashboard />} />
 
 
       </Routes>

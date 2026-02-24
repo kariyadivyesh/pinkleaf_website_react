@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+const ADMIN_EMAIL = "admin@gmail.com";
+
 export default function Login(){
 
   const navigate = useNavigate();
@@ -24,9 +26,22 @@ export default function Login(){
 
     const savedData = JSON.parse(localStorage.getItem("userData"));
 
+    // 🔥 ADMIN LOGIN
+    if(email === ADMIN_EMAIL){
+
+      // You can later verify admin password from DB
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("role", "admin");
+
+      navigate("/admin");
+      return;
+    }
+
+    // 🔥 NORMAL USER LOGIN
     if(savedData && email === savedData.email && password === savedData.password){
 
-      localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("role", "user");
 
       navigate("/home");
 
@@ -124,8 +139,6 @@ export default function Login(){
           >
             Login
           </button>
-
-          {/* SIGN UP OPTION SAME AS BEFORE */}
 
           <p style={{marginTop:"15px",textAlign:"center"}}>
             Don't have account ?

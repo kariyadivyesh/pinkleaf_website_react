@@ -34,13 +34,16 @@ export default function Checkout(){
 
   const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
 
-  const newOrder = {
-    id: Date.now(),
-    items: cartItems,
-    total: totalPrice,
-    date: new Date().toLocaleString(),
-    status: "pending"
-  };
+ const user = JSON.parse(localStorage.getItem("userData"));
+
+const newOrder = {
+  id: Date.now(),
+  name: user?.fullName || "User",
+  address: user?.address || "N/A",
+  items: cartItems,
+  total: totalPrice,
+  status: "Pending"
+};
 
   existingOrders.push(newOrder);
 
