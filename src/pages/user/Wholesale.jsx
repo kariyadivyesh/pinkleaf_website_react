@@ -1,195 +1,236 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../../assets/pinkleaf_logo.jpeg";
 
 export default function Wholesale(){
 
   const navigate = useNavigate();
 
-  const [showMessage,setShowMessage] = useState(false);
+  const [form,setForm] = useState({
+    fullName:"",
+    company:"",
+    email:"",
+    number:"",
+    address:"",
+    city:"",
+    state:"",
+    gst:""
+  });
 
-  const handleSubmit = (e)=>{
-    e.preventDefault();
+  const [status,setStatus] = useState(null);
 
-    // Future: send to backend
+  /* ================= LOAD USER DATA ================= */
 
-    setShowMessage(true);
+  useEffect(()=>{
 
-    setTimeout(()=>{
-      setShowMessage(false);
-    },3000);
+    const user =
+      JSON.parse(localStorage.getItem("userData")) || {};
+
+    setForm({
+      fullName:user.fullName || "",
+      company:"",
+      email:user.email || "",
+      number:user.phone || "",
+      address:user.address || "",
+      city:"",
+      state:"",
+      gst:""
+    });
+
+    const requests =
+      JSON.parse(localStorage.getItem("wholesaleRequests")) || [];
+
+    const myReq = requests.find(
+      r => r.email === user.email
+    );
+
+    if(myReq) setStatus(myReq.status);
+
+  },[]);
+
+
+  const handleChange=(e)=>{
+    setForm({...form,[e.target.name]:e.target.value});
   };
+
+
+  /* ================= SUBMIT ================= */
+
+  const submitRequest=()=>{
+
+    if(!form.fullName || !form.email || !form.number){
+      alert("Fill required fields");
+      return;
+    }
+
+    const requests =
+      JSON.parse(localStorage.getItem("wholesaleRequests")) || [];
+
+    const newRequest={
+      id:Date.now(),
+      fullName:form.fullName,
+      company:form.company,
+      email:form.email,
+      number:form.number,
+      address:form.address,
+      city:form.city,
+      state:form.state,
+      gst:form.gst,
+      status:"Pending"
+    };
+
+    requests.push(newRequest);
+
+    localStorage.setItem(
+      "wholesaleRequests",
+      JSON.stringify(requests)
+    );
+
+    alert("Your request successfully sent");
+
+    setStatus("Pending");
+  };
+
 
   return(
 
-    <div style={{minHeight:"100vh",background:"#f2f2f2"}}>
+<div style={{background:"#f5f5f5",minHeight:"100vh"}}>
 
-      {/* NAVBAR (Same as Home) */}
+{/* ✅ FULL WIDTH NAVBAR */}
 
-      <div style={{
-        display:"flex",
-        justifyContent:"space-between",
-        alignItems:"center",
-        padding:"12px 40px",
-        background:"#faf8f8"
-      }}>
+<div style={{
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center",
+padding:"12px 40px",
+background:"#faf8f8"
+}}>
 
-        <img src={logo} width="40"/>
+<img src={logo} width="40"/>
 
-        <div style={{display:"flex",alignItems:"center",gap:"25px"}}>
+<div style={{display:"flex",gap:"25px",alignItems:"center"}}>
+<span onClick={()=>navigate("/home")} style={{cursor:"pointer"}}>Home</span>
+<span onClick={()=>navigate("/retail")} style={{cursor:"pointer"}}>Retail</span>
+<span style={{color:"#ff2e8a",fontWeight:"bold"}}>Wholesale</span>
 
-          <span onClick={()=>navigate("/home")} style={{cursor:"pointer"}}>Home</span>
-          <span onClick={()=>navigate("/retail")} style={{cursor:"pointer"}}>Retail</span>
-          <span style={{color:"#ff2e8a",fontWeight:"bold"}}>Wholesale</span>
+<img
+src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
+width="22"
+/>
 
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
-            width="22"
-            style={{cursor:"pointer"}}
-            onClick={()=>navigate("/profile")}
-          />
+<button
+onClick={()=>navigate("/")}
+style={{
+border:"1px solid #007bff",
+padding:"6px 14px"
+}}
+>
+LogOut
+</button>
+</div>
 
-          <button
-            onClick={()=>navigate("/")}
-            style={{
-              border:"1px solid #007bff",
-              background:"transparent",
-              padding:"6px 14px"
-            }}
-          >
-            LogOut
-          </button>
-
-        </div>
-
-      </div>
+</div>
 
 
+{/* MAIN SECTION */}
 
-      {/* MAIN SECTION */}
+<div style={{display:"flex"}}>
 
-      <div style={{
-        display:"flex",
-        minHeight:"85vh"
-      }}>
+{/* LEFT PINK PANEL */}
 
-        {/* LEFT PINK SIDE */}
+<div style={{
+width:"45%",
+background:"linear-gradient(180deg,#ff008c,#ff4da6)",
+color:"#fff",
+padding:"60px",
+minHeight:"calc(100vh - 60px)"
+}}>
 
-        <div style={{
-          flex:1,
-          background:"linear-gradient(135deg,#ff008c,#ff4da6)",
-          color:"#fff",
-          padding:"60px"
-        }}>
+<h1 style={{marginTop:"80px"}}>Pinkleaf Wholesale</h1>
 
-          <div style={{fontSize:"60px"}}>🛍</div>
+<p style={{marginTop:"20px"}}>
+Bulk orders with unbeatable prices for retailers and resellers
+</p>
 
-          <h1 style={{marginTop:"20px"}}>Pinkleaf Wholesale</h1>
+<ul style={{marginTop:"40px",lineHeight:"35px"}}>
+<li>Competitive wholesale pricing</li>
+<li>Flexible Payments terms</li>
+<li>Priority Customer Support</li>
+</ul>
 
-          <p style={{marginTop:"20px",fontSize:"18px"}}>
-            Bulk orders with unbeatable prices for retailers and resellers
-          </p>
+<div style={{marginTop:"80px"}}>
+<h2>CONTACT US</h2>
+<p><br></br>Contact Number : +91 82389 45773</p>
+<p><br></br>kariyadivyesh@gmail.com</p>
+</div>
 
-          <ul style={{marginTop:"30px",lineHeight:"35px",fontSize:"18px"}}>
-            <li>Competitive wholesale pricing</li>
-            <li>Flexible Payment terms</li>
-            <li>Priority Customer Support</li>
-          </ul>
-
-          <div style={{marginTop:"60px"}}>
-            <h3>CONTACT US</h3>
-            <p><br/>+91 82389 45773</p>
-            <p><br/>kariyadivyesh@gmail.com</p>
-          </div>
-
-        </div>
+</div>
 
 
+{/* RIGHT FORM */}
 
-        {/* RIGHT FORM SIDE */}
+<div style={{flex:1,padding:"50px"}}>
 
-        <div style={{
-          flex:1,
-          padding:"60px"
-        }}>
+<div style={{maxWidth:"500px"}}>
 
-          {showMessage && (
-            <div style={{
-              background:"#d4edda",
-              padding:"10px",
-              marginBottom:"20px",
-              borderRadius:"5px",
-              color:"#155724"
-            }}>
-              Your request successfully sent!
-            </div>
-          )}
+<Input label="Full Name" name="fullName" value={form.fullName} onChange={handleChange}/>
+<Input label="Company Name" name="company" value={form.company} onChange={handleChange}/>
+<Input label="Email Address" name="email" value={form.email} onChange={handleChange}/>
+<Input label="Phone Number" name="number" value={form.number} onChange={handleChange}/>
+<Input label="Business Address" name="address" value={form.address} onChange={handleChange}/>
 
-          <form onSubmit={handleSubmit}>
+<div style={{display:"flex",gap:"15px"}}>
+<Input label="City" name="city" value={form.city} onChange={handleChange}/>
+<Input label="State" name="state" value={form.state} onChange={handleChange}/>
+</div>
 
-            <label>Full Name</label>
-            <input required style={inputStyle}/>
+<Input label="GST Number (Optional)" name="gst" value={form.gst} onChange={handleChange}/>
 
-            <label>Company Name</label>
-            <input required style={inputStyle}/>
+<button
+onClick={submitRequest}
+style={{
+marginTop:"20px",
+width:"100%",
+background:"#ff2e8a",
+color:"#fff",
+border:"none",
+padding:"12px",
+borderRadius:"6px"
+}}
+>
+Submit Request
+</button>
 
-            <label>Email Address</label>
-            <input required type="email" style={inputStyle}/>
+{status && (
+<p style={{marginTop:"20px"}}>
+Status :
+{status==="Pending" && " ⏳ Pending"}
+{status==="Approved" && " ✅ Approved"}
+{status==="Rejected" && " ❌ Rejected"}
+</p>
+)}
 
-            <label>Phone Number</label>
-            <input required style={inputStyle}/>
+</div>
 
-            <label>Business Address</label>
-            <input required style={inputStyle}/>
+</div>
 
-            <div style={{display:"flex",gap:"20px"}}>
+</div>
 
-              <div style={{flex:1}}>
-                <label>City</label>
-                <input required style={inputStyle}/>
-              </div>
-
-              <div style={{flex:1}}>
-                <label>State</label>
-                <input required style={inputStyle}/>
-              </div>
-
-            </div>
-
-            <label>GST Number (Optional)</label>
-            <input style={inputStyle}/>
-
-            <button
-              type="submit"
-              style={{
-                marginTop:"20px",
-                background:"#ff2e8a",
-                color:"#fff",
-                border:"none",
-                padding:"12px",
-                width:"100%",
-                borderRadius:"6px",
-                fontSize:"16px"
-              }}
-            >
-              Submit Request
-            </button>
-
-          </form>
-
-        </div>
-
-      </div>
-
-    </div>
+</div>
   );
 }
 
-const inputStyle = {
-  width:"100%",
-  padding:"10px",
-  marginBottom:"15px",
-  marginTop:"5px",
-  border:"1px solid #ccc",
-  borderRadius:"4px"
-};
+function Input({label,...props}){
+return(
+<div style={{marginTop:"15px"}}>
+<p>{label}</p>
+<input {...props}
+style={{
+width:"100%",
+padding:"10px",
+border:"1px solid #ccc"
+}}
+/>
+</div>
+);
+}

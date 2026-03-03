@@ -62,7 +62,7 @@ boxShadow:"0 2px 5px rgba(0,0,0,0.1)"
 
 <div style={{display:"flex",alignItems:"center",gap:"15px"}}>
 <img src={logo} width="40"/>
-<h3>Admin Panel</h3>
+<h3>Admin Dashboard</h3>
 </div>
 
 <button
@@ -93,11 +93,32 @@ padding:"20px",
 minHeight:"calc(100vh - 70px)"
 }}>
 
-<SidebarItem text="Dashboard" active={activePage==="dashboard"} onClick={()=>setActivePage("dashboard")} />
-<SidebarItem text="Categories" onClick={()=>setActivePage("categories")} />
-<SidebarItem text="Products" />
-<SidebarItem text="Product List" />
-<SidebarItem text="Wholesale Request" />
+<SidebarItem
+ text="Dashboard"
+ active={activePage==="dashboard"}
+ onClick={()=>setActivePage("dashboard")}
+/>
+
+{/* 🔥 CHANGE — DIRECT NAVIGATION */}
+
+<SidebarItem
+ text="Categories"
+ onClick={()=>navigate("/admin/categories")}
+/>
+
+<SidebarItem 
+text="Products"
+onClick={()=>navigate("/admin/products")}
+ />
+
+
+<SidebarItem text="Product List" 
+onClick={()=>navigate("/admin/product-list")}
+/>
+
+<SidebarItem text="Wholesale Request" 
+onClick={()=>navigate("/admin/wholesale-requests")}
+/>
 
 </div>
 
@@ -192,13 +213,7 @@ onChange={(e)=>updateStatus(index,e.target.value)}
 </div>
 
 ))}
-
 </>
-
-)}
-
-{activePage==="categories" && (
-<h2>Categories Page (Future Design)</h2>
 )}
 
 </div>

@@ -15,50 +15,82 @@ export default function Checkout(){
     navigate("/");
   };
 
+  // LOAD CART + USER
   useEffect(()=>{
 
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const storedCart =
+      JSON.parse(localStorage.getItem("cart")) || [];
+
     setCartItems(storedCart);
 
-    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    const userData =
+      JSON.parse(localStorage.getItem("userData")) || {};
+
     setUser(userData);
 
   },[]);
 
+
+  // ✅ SAFE TOTAL CALCULATION (ADMIN PRODUCTS FIX)
   const totalPrice = cartItems.reduce(
-    (total,item)=> total + item.price * (item.quantity || 1),
+    (total,item)=>
+      total + (Number(item.price) || 0) * (item.quantity || 1),
     0
   );
 
+
+  // ✅ PLACE ORDER (FULLY FIXED)
   const placeOrder = ()=>{
 
-  const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
+    if(cartItems.length === 0){
+      alert("Cart is empty");
+      return;
+    }
 
- const user = JSON.parse(localStorage.getItem("userData"));
+    const existingOrders =
+      JSON.parse(localStorage.getItem("orders")) || [];
 
-const newOrder = {
-  id: Date.now(),
-  name: user?.fullName || "User",
-  address: user?.address || "N/A",
-  items: cartItems,
-  total: totalPrice,
-  status: "Pending"
-};
+    const userData =
+      JSON.parse(localStorage.getItem("userData")) || {};
 
-  existingOrders.push(newOrder);
+    const newOrder = {
+      id: Date.now(),
 
-  localStorage.setItem("orders", JSON.stringify(existingOrders));
+      name: userData?.fullName || "User",
+      address: userData?.address || "N/A",
 
-  localStorage.removeItem("cart");
+      // 🔥 normalize products (IMPORTANT FIX)
+      items: cartItems.map(item=>({
+        ...item,
+        price: Number(item.price) || 0,
+        quantity: item.quantity || 1
+      })),
 
-  navigate(`/order-success/${newOrder.id}`);
-};
+      total: Number(totalPrice) || 0,
+      status: "Pending",
+      createdAt: new Date().toISOString()
+    };
+
+    existingOrders.push(newOrder);
+
+    localStorage.setItem(
+      "orders",
+      JSON.stringify(existingOrders)
+    );
+
+    // CLEAR CART
+    localStorage.removeItem("cart");
+
+    // SUCCESS PAGE
+    navigate(`/order-success/${newOrder.id}`);
+  };
+
 
   return(
 
     <div style={{background:"#f5f5f5",minHeight:"100vh"}}>
 
-      {/* ✅ FULL NAVBAR SAME AS HOME */}
+      {/* NAVBAR */}
 
       <div style={{
         display:"flex",
@@ -72,13 +104,19 @@ const newOrder = {
 
         <div style={{display:"flex",alignItems:"center",gap:"25px"}}>
 
-          <span onClick={()=>navigate("/home")} style={{cursor:"pointer"}}>Home</span>
+          <span onClick={()=>navigate("/home")} style={{cursor:"pointer"}}>
+            Home
+          </span>
 
-          <span onClick={()=>navigate("/retail")} style={{cursor:"pointer"}}>Retail</span>
+          <span onClick={()=>navigate("/retail")} style={{cursor:"pointer"}}>
+            Retail
+          </span>
 
-          <span onClick={()=>navigate("/wholesale")} style={{cursor:"pointer"}}>Wholesale</span>
+          <span onClick={()=>navigate("/wholesale")} style={{cursor:"pointer"}}>
+            Wholesale
+          </span>
 
-          {/* PROFILE ICON */}
+          {/* PROFILE */}
           <img
             src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
             width="22"
@@ -86,7 +124,7 @@ const newOrder = {
             onClick={()=>navigate("/profile")}
           />
 
-          {/* CART ICON */}
+          {/* CART */}
           <img
             src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
             width="22"
@@ -112,10 +150,9 @@ const newOrder = {
       </div>
 
 
-      {/* ✅ BACK BUTTON (NAVBAR KE NICHE) */}
+      {/* BACK BUTTON */}
 
       <div style={{padding:"20px 40px"}}>
-
         <button
           onClick={()=>navigate("/cart")}
           style={{
@@ -127,7 +164,6 @@ const newOrder = {
         >
           ← Back to Cart
         </button>
-
       </div>
 
 
@@ -183,8 +219,13 @@ const newOrder = {
               justifyContent:"space-between",
               marginTop:"10px"
             }}>
-              <span>{item.name} x {item.quantity || 1}</span>
-              <span>₹ {item.price * (item.quantity || 1)}</span>
+              <span>
+                {item.name} x {item.quantity || 1}
+              </span>
+
+              <span>
+                ₹ {(Number(item.price)||0)*(item.quantity||1)}
+              </span>
             </div>
 
           ))}
@@ -202,7 +243,8 @@ const newOrder = {
               color:"#fff",
               border:"none",
               padding:"12px",
-              borderRadius:"5px"
+              borderRadius:"5px",
+              cursor:"pointer"
             }}
           >
             Place Order

@@ -13,6 +13,10 @@ import Checkout from "../pages/user/Checkout";
 import OrderSuccess from "../pages/user/OrderSuccess";
 import MyOrders from "../pages/user/MyOrders";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import Categories from "../pages/admin/Categories";
+import AdminProducts from "../pages/admin/AdminProducts";
+import AdminProductList from "../pages/admin/AdminProductList";
+import AdminWholesale from "../pages/admin/AdminWholesale";
 
 export default function AppRoutes(){
 
@@ -61,6 +65,17 @@ export default function AppRoutes(){
         {/* Admin Dashboard */}
         <Route path="/admin" element={<AdminDashboard />} />
 
+        {/* Manage Categories */}
+        <Route path="/admin/categories" element={<Categories />} />
+
+        {/* Manage Products */}
+        <Route path="/admin/products" element={<AdminProducts />} />
+
+        {/* Product List for Edit/Delete */}
+        <Route path="/admin/product-list" element={<AdminProductList />} />
+
+        {/* Wholesale Requests */}
+        <Route path="/admin/wholesale-requests" element={<AdminWholesale />} />
 
       </Routes>
 

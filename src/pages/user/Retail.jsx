@@ -16,80 +16,106 @@ export default function Retail(){
 
   const [activeCategory,setActiveCategory] = useState("all");
   const [cartCount,setCartCount] = useState(0);
+  const [categories,setCategories] = useState([]);
+  const [products,setProducts] = useState([]);
 
-  const handleLogout = () => {
+  const normalizeCategory = (cat)=>
+    cat?.toLowerCase().replace(/[\s-]/g,"");
+
+  const handleLogout=()=>{
     localStorage.removeItem("isLoggedIn");
     navigate("/");
   };
 
-  // 🔥 READ CATEGORY FROM URL
+  /* LOAD PRODUCTS */
   useEffect(()=>{
-    const queryParams = new URLSearchParams(location.search);
-    const categoryFromURL = queryParams.get("category");
 
-    if(categoryFromURL){
-      setActiveCategory(categoryFromURL);
-    } else {
-      setActiveCategory("all");
-    }
+    const adminProducts =
+      JSON.parse(localStorage.getItem("products")) || [];
+
+    const staticProducts=[
+
+      {id:1,name:"Black Fancy T-shirt",price:600,size:"M",category:"tshirt",img:tshirtImg},
+      {id:2,name:"White Casual T-shirt",price:650,size:"L",category:"tshirt",img:tshirtImg},
+      {id:3,name:"Premium Cotton T-shirt",price:700,size:"XL",category:"tshirt",img:tshirtImg},
+
+      {id:4,name:"Blue Denim Jeans",price:1000,size:"M",category:"jeans",img:jeansImg},
+      {id:5,name:"Slim Fit Jeans",price:1200,size:"L",category:"jeans",img:jeansImg},
+
+      {id:6,name:"Yellow Designer Kurti",price:800,size:"M",category:"kurti",img:kurtiImg},
+
+      {id:7,name:"Western Style Outfit",price:1400,size:"M",category:"westernwear",img:westernImg},
+
+      {id:8,name:"Cordset Premium",price:1600,size:"M",category:"cordset",img:cordsetImg},
+    ];
+
+    const normalizedAdmin = adminProducts.map(p=>({
+      ...p,
+      category: normalizeCategory(p.category),
+      price: Number(p.price)||0
+    }));
+
+    setProducts([...staticProducts,...normalizedAdmin]);
+
+  },[]);
+
+  /* LOAD CATEGORY BUTTONS */
+  useEffect(()=>{
+
+    const storedCategories =
+      JSON.parse(localStorage.getItem("categories")) || [];
+
+    const formatted = storedCategories.map(c=>({
+      label:c,
+      value:normalizeCategory(c)
+    }));
+
+    setCategories([{label:"All Products",value:"all"},...formatted]);
+
+  },[]);
+
+  /* URL CATEGORY */
+  useEffect(()=>{
+    const params=new URLSearchParams(location.search);
+    setActiveCategory(params.get("category")||"all");
   },[location.search]);
 
-  // 🔥 LOAD CART COUNT
+  /* CART COUNT */
   useEffect(()=>{
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cart=JSON.parse(localStorage.getItem("cart"))||[];
     setCartCount(cart.length);
   },[]);
 
-  // 🔥 ADD TO CART FUNCTION
-  const addToCart = (product) => {
+  /* ADD TO CART */
+  const addToCart=(product)=>{
 
-    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cart=JSON.parse(localStorage.getItem("cart"))||[];
 
-    existingCart.push(product);
+    cart.push({
+      id: Date.now()+Math.random(),
+      name: product.name,
+      price: Number(product.price)||0,
+      size: product.size||"M",
+      category: product.category,
+      img: product.img,
+      quantity:1
+    });
 
-    localStorage.setItem("cart", JSON.stringify(existingCart));
-
-    setCartCount(existingCart.length);
+    localStorage.setItem("cart",JSON.stringify(cart));
+    setCartCount(cart.length);
   };
-
-
-  // PRODUCTS
-  const products = [
-
-    {name:"Black Fancy T-shirt",price:600,size:"M",category:"tshirt",img:tshirtImg},
-    {name:"White Casual T-shirt",price:650,size:"L",category:"tshirt",img:tshirtImg},
-    {name:"Premium Cotton T-shirt",price:700,size:"XL",category:"tshirt",img:tshirtImg},
-
-    {name:"Blue Denim Jeans",price:1000,size:"M",category:"jeans",img:jeansImg},
-    {name:"Slim Fit Jeans",price:1200,size:"L",category:"jeans",img:jeansImg},
-    {name:"Classic Denim Jeans",price:1100,size:"XL",category:"jeans",img:jeansImg},
-
-    {name:"Yellow Designer Kurti",price:800,size:"M",category:"kurti",img:kurtiImg},
-    {name:"Festive Kurti Style",price:950,size:"L",category:"kurti",img:kurtiImg},
-    {name:"Daily Wear Kurti",price:750,size:"XL",category:"kurti",img:kurtiImg},
-
-    {name:"Western Style Outfit",price:1400,size:"M",category:"western",img:westernImg},
-    {name:"Modern Western Wear",price:1500,size:"L",category:"western",img:westernImg},
-
-    {name:"Cordset Premium",price:1600,size:"M",category:"cordset",img:cordsetImg},
-    {name:"Summer Cordset",price:1700,size:"L",category:"cordset",img:cordsetImg},
-    {name:"Elegant Cordset",price:1800,size:"XL",category:"cordset",img:cordsetImg},
-
-    {name:"Trendy Kurti Design",price:850,size:"M",category:"kurti",img:kurtiImg},
-
-  ];
 
   const filteredProducts =
     activeCategory==="all"
-    ? products
-    : products.filter(p=>p.category===activeCategory);
+      ? products
+      : products.filter(
+          p=>normalizeCategory(p.category)===activeCategory
+        );
 
   return(
-
     <div style={{background:"#f5f5f5",minHeight:"100vh"}}>
 
       {/* NAVBAR */}
-
       <div style={{
         display:"flex",
         justifyContent:"space-between",
@@ -103,9 +129,7 @@ export default function Retail(){
         <div style={{display:"flex",alignItems:"center",gap:"25px"}}>
 
           <span onClick={()=>navigate("/home")} style={{cursor:"pointer"}}>Home</span>
-
           <span style={{color:"#ff2e8a",fontWeight:"bold"}}>Retail</span>
-
           <span onClick={()=>navigate("/wholesale")} style={{cursor:"pointer"}}>Wholesale</span>
 
           <img
@@ -115,16 +139,8 @@ export default function Retail(){
             onClick={()=>navigate("/profile")}
           />
 
-          {/* 🔥 CART WITH COUNT */}
-          <div onClick={()=>navigate("/cart")}
-          style={{position:"relative",cursor:"pointer"}}>
-            
-            <img 
-              src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
-              width="22"
-            />
-            
-
+          <div onClick={()=>navigate("/cart")} style={{position:"relative",cursor:"pointer"}}>
+            <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" width="22"/>
             {cartCount>0 && (
               <span style={{
                 position:"absolute",
@@ -135,70 +151,41 @@ export default function Retail(){
                 borderRadius:"50%",
                 padding:"2px 6px",
                 fontSize:"12px"
-              }}>
-                {cartCount}
-              </span>
+              }}>{cartCount}</span>
             )}
           </div>
 
-          <button
-            onClick={handleLogout}
-            style={{
-              border:"1px solid #007bff",
-              background:"transparent",
-              padding:"6px 14px"
-            }}
-          >
+          <button onClick={handleLogout}
+            style={{border:"1px solid #007bff",background:"transparent",padding:"6px 14px"}}>
             LogOut
           </button>
 
         </div>
-
       </div>
 
-
-      {/* TITLE + CATEGORY */}
-
+      {/* CATEGORY */}
       <div style={{padding:"30px"}}>
-
         <h1>Shop Collection</h1>
-        <p>Discover our latest collection</p>
 
         <div style={{display:"flex",gap:"15px",marginTop:"20px"}}>
-
-          {[
-            {label:"All Products",value:"all"},
-            {label:"T-shirts",value:"tshirt"},
-            {label:"Jeans",value:"jeans"},
-            {label:"Western wear",value:"western"},
-            {label:"Cordset",value:"cordset"},
-            {label:"Kurti",value:"kurti"}
-          ].map(cat=>(
-
-            <button
-              key={cat.value}
+          {categories.map(cat=>(
+            <button key={cat.value}
               onClick={()=>setActiveCategory(cat.value)}
               style={{
                 padding:"10px 20px",
                 borderRadius:"20px",
                 border:"none",
-                background: activeCategory===cat.value ? "#ff2e8a":"#e6d3de",
-                color: activeCategory===cat.value ? "#fff":"#000",
+                background:activeCategory===cat.value?"#ff2e8a":"#e6d3de",
+                color:activeCategory===cat.value?"#fff":"#000",
                 cursor:"pointer"
-              }}
-            >
+              }}>
               {cat.label}
             </button>
-
           ))}
-
         </div>
-
       </div>
 
-
-      {/* PRODUCT GRID */}
-
+      {/* PRODUCTS */}
       <div style={{
         display:"grid",
         gridTemplateColumns:"repeat(auto-fit,minmax(350px,1fr))",
@@ -206,20 +193,19 @@ export default function Retail(){
         padding:"20px 40px"
       }}>
 
-        {filteredProducts.map((item,index)=>(
-
-          <div key={index} style={{
-            background:"#fff",
-            borderRadius:"10px",
-            overflow:"hidden",
-            boxShadow:"0 0 8px rgba(0,0,0,0.1)"
-          }}>
+        {filteredProducts.map(item=>(
+          <div key={item.id}
+            style={{
+              background:"#fff",
+              borderRadius:"10px",
+              overflow:"hidden",
+              boxShadow:"0 0 8px rgba(0,0,0,0.1)"
+            }}>
 
             <img src={item.img}
-            style={{width:"100%",height:"350px",objectFit:"cover"}}/>
+              style={{width:"100%",height:"350px",objectFit:"cover"}}/>
 
             <div style={{padding:"15px"}}>
-
               <h3>{item.name}</h3>
               <p>Size: {item.size}</p>
               <h3 style={{color:"#ff2e8a"}}>₹ {item.price}</h3>
@@ -231,16 +217,14 @@ export default function Retail(){
                   color:"#fff",
                   border:"none",
                   padding:"10px 20px",
-                  borderRadius:"5px"
-                }}
-              >
+                  borderRadius:"5px",
+                  cursor:"pointer"
+                }}>
                 Buy Now
               </button>
-
             </div>
 
           </div>
-
         ))}
 
       </div>
