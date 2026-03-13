@@ -36,12 +36,17 @@ export default function AdminDashboard(){
     0
   );
 
-  const updateStatus = (index,newStatus)=>{
+  const updateStatus = (orderIndex,newStatus)=>{
 
     const updated = [...orders];
-    updated[index].status = newStatus;
+    updated[orderIndex].status = newStatus;
+
     setOrders(updated);
-    localStorage.setItem("orders", JSON.stringify([...updated].reverse()));
+
+    localStorage.setItem(
+      "orders",
+      JSON.stringify([...updated].reverse())
+    );
   };
 
   return(
@@ -99,26 +104,10 @@ minHeight:"calc(100vh - 70px)"
  onClick={()=>setActivePage("dashboard")}
 />
 
-{/* 🔥 CHANGE — DIRECT NAVIGATION */}
-
-<SidebarItem
- text="Categories"
- onClick={()=>navigate("/admin/categories")}
-/>
-
-<SidebarItem 
-text="Products"
-onClick={()=>navigate("/admin/products")}
- />
-
-
-<SidebarItem text="Product List" 
-onClick={()=>navigate("/admin/product-list")}
-/>
-
-<SidebarItem text="Wholesale Request" 
-onClick={()=>navigate("/admin/wholesale-requests")}
-/>
+<SidebarItem text="Categories" onClick={()=>navigate("/admin/categories")} />
+<SidebarItem text="Products" onClick={()=>navigate("/admin/products")} />
+<SidebarItem text="Product List" onClick={()=>navigate("/admin/product-list")} />
+<SidebarItem text="Wholesale Request" onClick={()=>navigate("/admin/wholesale-requests")} />
 
 </div>
 
@@ -155,55 +144,69 @@ fontWeight:"bold",
 borderRadius:"8px"
 }}>
 
-<p style={{width:"90px"}}>Image</p>
-<p style={{width:"140px"}}>Category</p>
+<p style={{width:"200px"}}>Products</p>
 <p style={{width:"160px"}}>Customer</p>
-<p style={{width:"180px"}}>Address</p>
+<p style={{width:"220px"}}>Address</p>
 <p style={{width:"120px"}}>Amount</p>
 <p>Status</p>
 
 </div>
 
-{orders.map((o,index)=>(
+{/* ✅ SINGLE ROW PER ORDER (FINAL FIX) */}
 
-<div key={index} style={{
+{orders.map((order,orderIndex)=>(
+
+<div
+key={order.id}
+style={{
 display:"flex",
 alignItems:"center",
 background:"#fff",
 padding:"15px",
 marginTop:"10px",
 borderRadius:"10px"
+}}
+>
+
+{/* PRODUCTS LIST */}
+
+<div style={{
+width:"200px",
+display:"flex",
+gap:"6px",
+flexWrap:"wrap"
 }}>
 
+{order.items?.map((item,i)=>(
 <img
-src={o.items?.[0]?.img}
+key={i}
+src={item.img}
 style={{
-width:"70px",
-height:"70px",
+width:"45px",
+height:"45px",
 objectFit:"cover",
-borderRadius:"10px"
+borderRadius:"6px"
 }}
 />
+))}
 
-<p style={{marginLeft:"20px",width:"120px"}}>
-{o.items?.[0]?.category}
+</div>
+
+<p style={{width:"160px"}}>
+{order.name}
 </p>
 
-<p style={{width:"150px"}}>
-{o.name}
+<p style={{width:"220px"}}>
+{order.address}
 </p>
 
-<p style={{width:"200px"}}>
-{o.address}
-</p>
-
-<p style={{width:"100px"}}>
-₹ {o.total}
+<p style={{width:"120px"}}>
+₹ {order.total}
 </p>
 
 <select
-value={o.status}
-onChange={(e)=>updateStatus(index,e.target.value)}
+value={order.status}
+onChange={(e)=>updateStatus(orderIndex,e.target.value)}
 >
 <option>Pending</option>
 <option>Confirmed</option>
@@ -213,6 +216,7 @@ onChange={(e)=>updateStatus(index,e.target.value)}
 </div>
 
 ))}
+
 </>
 )}
 
@@ -225,9 +229,7 @@ onChange={(e)=>updateStatus(index,e.target.value)}
 }
 
 
-
 function SidebarItem({text,active,onClick}){
-
 return(
 <p
 onClick={onClick}
@@ -245,10 +247,7 @@ cursor:"pointer"
 );
 }
 
-
-
 function Card({title,value,color,icon}){
-
 return(
 <div style={{
 background:"#fff",
